@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEO_HEAVEN</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cyber-dark': '#0a0a0f',
+            'cyber-black': '#000000',
+            'cyber-gray': '#1a1a24',
+            'cyber-cyan': '#00d9ff',
+            'cyber-pink': '#ff006e',
+            'cyber-purple': '#8b5cf6',
+            'cyber-yellow': '#ffd60a'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap');
+    
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Rajdhani', sans-serif;
+      background: linear-gradient(180deg, #0a0a0f 0%, #000000 100%);
+      color: #ffffff;
+      min-height: 100vh;
+    }
+    
+    .font-orbitron { font-family: 'Orbitron', sans-serif; }
+    .clip-corner { clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
+    
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(-2px, -2px); }
+      60% { transform: translate(2px, 2px); }
+      80% { transform: translate(2px, -2px); }
+    }
+    
+    .animate-glitch:hover { animation: glitch 0.3s infinite; }
+    
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #0a0a0f; }
+    ::-webkit-scrollbar-thumb { background: #00d9ff; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect, useMemo, useRef } = React;
+    
+    // Simple Icon Component
+    const Icon = ({ name, size = 20, className = "" }) => {
+      const icons = {
+        Search: "🔍", Bell: "🔔", Menu: "☰", User: "👤", ShieldAlert: "🛡️",
+        X: "✕", Edit3: "✏️", Globe: "🌐", Image: "🖼️", MessageCircle: "💬",
+        Megaphone: "📢", Info: "ℹ️", Radio: "📡", Lock: "🔒", Unlock: "🔓",
+        Send: "📤", Eye: "👁️", EyeOff: "👁️‍🗨️", Heart: "❤️", MessageSquare: "💬",
+        Trash2: "🗑️", Edit: "✏️", ChevronDown: "▼", ChevronUp: "▲",
+        MoreHorizontal: "⋯", AlertTriangle: "⚠️", Check: "✓", Clock: "🕐",
+        Hash: "＃", Users: "👥", Smile: "😊", Edit2: "📝", Cpu: "💻",
+        Palette: "🎨", HelpCircle: "❓", Sparkles: "✨", ThumbsUp: "👍",
+        ThumbsDown: "👎", CornerDownRight: "↩️", HeartCrack: "💔",
+        ShieldCheck: "✅", ShieldBan: "🚫", Wifi: "📶"
+      };
+      return React.createElement('span', {
+        className: `inline-block ${className}`,
+        style: { fontSize: size, lineHeight: 1 },
+      }, icons[name] || "•");
+    };
+    
+    // Icon exports
+    const Search = (props) => React.createElement(Icon, {...props, name: "Search"});
+    const Bell = (props) => React.createElement(Icon, {...props, name: "Bell"});
+    const Menu = (props) => React.createElement(Icon, {...props, name: "Menu"});
+    const UserIcon = (props) => React.createElement(Icon, {...props, name: "User"});
+    const ShieldAlert = (props) => React.createElement(Icon, {...props, name: "ShieldAlert"});
+    const X = (props) => React.createElement(Icon, {...props, name: "X"});
+    const Edit3 = (props) => React.createElement(Icon, {...props, name: "Edit3"});
+    const Globe = (props) => React.createElement(Icon, {...props, name: "Globe"});
+    const ImageIcon = (props) => React.createElement(Icon, {...props, name: "Image"});
+    const MessageCircle = (props) => React.createElement(Icon, {...props, name: "MessageCircle"});
+    const Megaphone = (props) => React.createElement(Icon, {...props, name: "Megaphone"});
+    const Info = (props) => React.createElement(Icon, {...props, name: "Info"});
+    const Radio = (props) => React.createElement(Icon, {...props, name: "Radio"});
+    const Lock = (props) => React.createElement(Icon, {...props, name: "Lock"});
+    const Send = (props) => React.createElement(Icon, {...props, name: "Send"});
+    const Eye = (props) => React.createElement(Icon, {...props, name: "Eye"});
+    const EyeOff = (props) => React.createElement(Icon, {...props, name: "EyeOff"});
+    const Heart = (props) => React.createElement(Icon, {...props, name: "Heart"});
+    const MessageSquare = (props) => React.createElement(Icon, {...props, name: "MessageSquare"});
+    const Trash2 = (props) => React.createElement(Icon, {...props, name: "Trash2"});
+    const Edit = (props) => React.createElement(Icon, {...props, name: "Edit"});
+    const AlertTriangle = (props) => React.createElement(Icon, {...props, name: "AlertTriangle"});
+    const Clock = (props) => React.createElement(Icon, {...props, name: "Clock"});
+    const Hash = (props) => React.createElement(Icon, {...props, name: "Hash"});
+    const Users = (props) => React.createElement(Icon, {...props, name: "Users"});
+    const Smile = (props) => React.createElement(Icon, {...props, name: "Smile"});
+    const Edit2 = (props) => React.createElement(Icon, {...props, name: "Edit2"});
+    const Cpu = (props) => React.createElement(Icon, {...props, name: "Cpu"});
+    const Palette = (props) => React.createElement(Icon, {...props, name: "Palette"});
+    const HelpCircle = (props) => React.createElement(Icon, {...props, name: "HelpCircle"});
+    const Sparkles = (props) => React.createElement(Icon, {...props, name: "Sparkles"});
+    const ThumbsUp = (props) => React.createElement(Icon, {...props, name: "ThumbsUp"});
+    const ThumbsDown = (props) => React.createElement(Icon, {...props, name: "ThumbsDown"});
+    const CornerDownRight = (props) => React.createElement(Icon, {...props, name: "CornerDownRight"});
+    const HeartCrack = (props) => React.createElement(Icon, {...props, name: "HeartCrack"});
+    const ShieldCheck = (props) => React.createElement(Icon, {...props, name: "ShieldCheck"});
+    const ShieldBan = (props) => React.createElement(Icon, {...props, name: "ShieldBan"});
+    const Wifi = (props) => React.createElement(Icon, {...props, name: "Wifi"});
+    
+    // Tab enum
+    const Tab = {
+      NOTICE: 'NOTICE',
+      FEED: 'FEED',
+      POPULAR: 'POPULAR',
+      RANDOM: 'RANDOM',
+      CHAT: 'CHAT',
+      PROFILE: 'PROFILE'
+    };
+    
+    // Constants
+    const CURRENT_USER = {
+      username: "Ghost_In_Shell",
+      avatar: "https://picsum.photos/200",
+      reputation: 2077,
+      role: 'USER'
+    };
+
+    const timeAgo = (hours) => {
+      const d = new Date();
+      d.setHours(d.getHours() - hours);
+      return d.toISOString();
+    };
+
+    const INITIAL_POSTS = [
+      {
+        id: '0',
+        author: 'System_Admin',
+        title: '[NOTICE] System Maintenance Schedule',
+        content: 'Server migration to new quantum cores scheduled for 03:00 UTC. Expect minimal downtime.',
+        tags: ['system', 'admin', 'notice'],
+        likes: 999,
+        likedBy: [],
+        dislikes: 0,
+        dislikedBy: [],
+        comments: [],
+        timestamp: timeAgo(1),
+        isAiEnhanced: false,
+        type: 'NOTICE'
+      },
+      {
+        id: '1',
+        author: 'Neo_K',
+        title: 'The Rain in Sector 7 looks different tonight',
+        content: 'Just walked past the old data centers. The neon reflection on the wet pavement is glitching out. Anyone else seeing artifacts in their visual cortex update?',
+        tags: ['glitch', 'tech', 'visuals'],
+        likes: 42,
+        likedBy: [],
+        dislikes: 0,
+        dislikedBy: [],
+        comments: [],
+        timestamp: timeAgo(2),
+        isAiEnhanced: false,
+        type: 'POST'
+      }
+    ];
+
+    const INITIAL_NOTIFICATIONS = [{
+      id: 'n1',
+      type: 'SYSTEM',
+      message: 'Neo Heaven에 오신 것을 환영합니다, 넷러너.',
+      timestamp: timeAgo(48),
+      read: false
+    }];
+
+    const INITIAL_WHISPERS = [];
+    
+    // COMPONENTS START HERE
+    
+    // CyberButton Component
+    const CyberButton = ({ children, variant = 'primary', className = '', isLoading = false, ...props }) => {
+      let baseStyles = "relative px-6 py-2 font-mono font-bold uppercase transition-all duration-200 clip-corner border focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed";
+      
+      const variants = {
+        primary: "bg-cyber-cyan/10 border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-cyber-black",
+        secondary: "bg-cyber-gray border-gray-600 text-gray-300 hover:border-white hover:text-white",
+        danger: "bg-cyber-pink/10 border-cyber-pink text-cyber-pink hover:bg-cyber-pink hover:text-white"
+      };
+
+      return (
+        <button 
+          className={`${baseStyles} ${variants[variant]} ${className}`}
+          disabled={isLoading || props.disabled}
+          {...props}
+        >
+          {isLoading ? <span>UPLOADING...</span> : children}
+        </button>
+      );
+    };
+    
+    // ConfirmationModal
+    const ConfirmationModal = ({ isOpen, onClose, onConfirm, title, message }) => {
+      if (!isOpen) return null;
+      return (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4">
+          <div className="w-full max-w-md bg-cyber-dark border border-cyber-pink clip-corner p-6 text-center">
+            <div className="flex justify-center mb-4">
+              <AlertTriangle size={48} className="text-cyber-pink" />
+            </div>
+            <h2 className="text-xl font-mono font-bold text-white mb-2 uppercase">{title}</h2>
+            <p className="text-gray-400 mb-8 font-mono text-sm">{message}</p>
+            <div className="flex gap-4 justify-center">
+              <CyberButton variant="secondary" onClick={onClose} className="w-32">CANCEL</CyberButton>
+              <CyberButton variant="danger" onClick={onConfirm} className="w-32">CONFIRM</CyberButton>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // NetworkStatusModal (simplified)
+    const NetworkStatusModal = ({ isOpen, onClose }) => {
+      if (!isOpen) return null;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-lg bg-cyber-dark border border-cyber-cyan clip-corner">
+            <div className="flex justify-between items-center p-6 border-b border-cyber-gray">
+              <h2 className="text-xl font-mono font-bold text-cyber-cyan flex items-center gap-2">
+                <Globe size={20} /> NETWORK_STATUS
+              </h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+            <div className="p-6">
+              <p className="text-center text-gray-400 font-mono">System Online</p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // AdminAuthModal
+    const AdminAuthModal = ({ isOpen, onClose, onSuccess }) => {
+      const [code, setCode] = useState('');
+      const [error, setError] = useState(false);
+
+      if (!isOpen) return null;
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (code === 'NEO2077') {
+          onSuccess('ADMIN');
+          setCode('');
+          onClose();
+        } else if (code === 'MOD2077') {
+          onSuccess('MODERATOR');
+          setCode('');
+          onClose();
+        } else {
+          setError(true);
+          setCode('');
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+          <div className="w-full max-w-md bg-cyber-dark border border-cyber-pink clip-corner">
+            <div className="flex justify-between items-center p-6 border-b border-cyber-gray">
+              <h2 className="text-xl font-mono font-bold text-cyber-pink flex items-center gap-2">
+                <ShieldAlert size={20} /> ADMIN_ACCESS
+              </h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-white">
+                <X size={24} />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-cyber-pink/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-cyber-pink">
+                  <Lock className="text-cyber-pink" size={32} />
+                </div>
+                <p className="text-sm font-mono text-gray-400">ENTER CODE</p>
+              </div>
+              <div>
+                <input
+                  type="password"
+                  value={code}
+                  onChange={(e) => { setCode(e.target.value); setError(false); }}
+                  placeholder="••••••••"
+                  className="w-full bg-cyber-black border border-cyber-gray p-4 text-center text-xl text-white tracking-widest"
+                  autoFocus
+                />
+                {error && <p className="text-red-500 text-xs font-mono mt-2 text-center">ACCESS DENIED</p>}
+              </div>
+              <div className="flex gap-3">
+                <CyberButton type="button" variant="secondary" onClick={onClose} className="w-full">ABORT</CyberButton>
+                <CyberButton type="submit" variant="danger" className="w-full">AUTH</CyberButton>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    };
+    
+    // NicknameModal
+    const NicknameModal = ({ isOpen, onClose, currentName, onUpdate }) => {
+      const [name, setName] = useState(currentName);
+      if (!isOpen) return null;
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (name.trim()) {
+          onUpdate(name);
+          onClose();
+        }
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-md bg-cyber-dark border border-cyber-cyan clip-corner">
+            <div className="flex justify-between items-center p-6 border-b border-cyber-gray">
+              <h2 className="text-xl font-mono font-bold text-cyber-cyan">CHANGE_ID</h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-white"><X size={24} /></button>
+            </div>
+            <form onSubmit={handleSubmit} className="p-8 space-y-6">
+              <div>
+                <label className="block text-xs font-mono text-gray-500 mb-2">CURRENT</label>
+                <div className="text-gray-400 font-mono mb-4 pb-2 border-b border-gray-700">{currentName}</div>
+                <label className="block text-xs font-mono text-cyber-cyan mb-2">NEW_NAME</label>
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full bg-cyber-black border border-cyber-gray p-3 text-white" autoFocus />
+              </div>
+              <div className="flex gap-3">
+                <CyberButton type="button" variant="secondary" onClick={onClose}>CANCEL</CyberButton>
+                <CyberButton type="submit" variant="primary">UPDATE</CyberButton>
+              </div>
+            </form>
+          </div>
+        </div>
+      );
+    };
+    
+    // AvatarModal (simplified)
+    const AvatarModal = ({ isOpen, onClose }) => {
+      if (!isOpen) return null;
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-sm bg-cyber-dark border border-cyber-yellow clip-corner">
+            <div className="flex justify-between items-center p-6 border-b border-cyber-gray">
+              <h2 className="text-xl font-mono font-bold text-cyber-yellow">AVATAR</h2>
+              <button onClick={onClose}><X size={24} /></button>
+            </div>
+            <div className="p-8">
+              <p className="text-center text-gray-400">Feature coming soon</p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // ProfileModal with Block and Message features
+    const ProfileModal = ({ isOpen, onClose, targetUser, currentUser, onBlock, onStartMessage }) => {
+      if (!isOpen || !targetUser) return null;
+      const isSelf = targetUser.username === currentUser;
+      
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
+          <div className="w-full max-w-sm bg-cyber-dark border border-cyber-cyan clip-corner relative">
+            <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-white z-10">
+              <X size={24} />
+            </button>
+            <div className="p-8 flex flex-col items-center">
+              <div className="w-24 h-24 rounded-full border-2 border-cyber-cyan p-1 mb-4 bg-cyber-black">
+                <div className="w-full h-full rounded-full bg-cyber-gray flex items-center justify-center text-4xl">
+                  {targetUser.username[0]}
+                </div>
+              </div>
+              <h2 className="text-xl font-bold text-white font-mono mb-1">{targetUser.username}</h2>
+              <div className="text-xs text-gray-500 font-mono mb-6">NETRUNNER</div>
+              
+              {!isSelf && (
+                <div className="flex gap-3 w-full">
+                  <button 
+                    onClick={() => { onStartMessage(targetUser.username); onClose(); }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-black transition-all font-mono text-sm"
+                  >
+                    <MessageCircle size={14} /> MESSAGE
+                  </button>
+                  <button 
+                    onClick={() => { onBlock(targetUser.username); onClose(); }}
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500 text-red-500 hover:bg-red-500 hover:text-white transition-all font-mono text-sm"
+                  >
+                    <ShieldBan size={14} /> BLOCK
+                  </button>
+                </div>
+              )}
+              
+              {isSelf && (
+                <p className="text-xs text-gray-500 font-mono text-center border-t border-cyber-gray w-full pt-4 mt-2">
+                  This is your profile
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // MessageModal - Direct Messaging System with Edit/Image
+    const MessageModal = ({ isOpen, onClose, currentUser, messages, onSendMessage, onDeleteMessage, onEditMessage, initialPartner }) => {
+      const [activePartner, setActivePartner] = useState(initialPartner || null);
+      const [inputText, setInputText] = useState('');
+      const [imageUrl, setImageUrl] = useState(null);
+      const [editingId, setEditingId] = useState(null);
+      const [editText, setEditText] = useState('');
+      const messagesEndRef = useRef(null);
+      const fileInputRef = useRef(null);
+
+      useEffect(() => {
+        if (initialPartner) setActivePartner(initialPartner);
+      }, [initialPartner]);
+
+      useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [messages.length, activePartner]);
+
+      if (!isOpen) return null;
+
+      const partners = Array.from(new Set(
+        messages.flatMap(m => [m.sender, m.receiver])
+          .filter(u => u !== currentUser)
+      ));
+
+      if (activePartner && !partners.includes(activePartner)) {
+        partners.unshift(activePartner);
+      }
+
+      const currentChat = activePartner 
+        ? messages.filter(m => 
+            (m.sender === currentUser && m.receiver === activePartner) || 
+            (m.sender === activePartner && m.receiver === currentUser)
+          ).sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
+        : [];
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            alert('이미지 크기는 5MB 이하여야 합니다.');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleSend = (e) => {
+        e.preventDefault();
+        if (!activePartner) return;
+        
+        if (editingId) {
+          onEditMessage(editingId, editText);
+          setEditingId(null);
+          setEditText('');
+        } else {
+          if (!inputText.trim() && !imageUrl) return;
+          onSendMessage(activePartner, inputText, imageUrl);
+          setInputText('');
+          setImageUrl(null);
+        }
+      };
+
+      const startEdit = (msg) => {
+        setEditingId(msg.id);
+        setEditText(msg.content);
+      };
+
+      const cancelEdit = () => {
+        setEditingId(null);
+        setEditText('');
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+          <div className="w-full max-w-4xl h-[600px] bg-cyber-dark border border-cyber-cyan clip-corner flex flex-col md:flex-row overflow-hidden">
+            {/* Sidebar: Conversations List */}
+            <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r border-cyber-gray bg-cyber-black/40 flex flex-col">
+              <div className="p-4 border-b border-cyber-gray flex justify-between items-center">
+                <h3 className="font-mono font-bold text-cyber-cyan uppercase text-sm">MESSAGES</h3>
+                <button onClick={onClose} className="md:hidden">
+                  <X size={20} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                {partners.length === 0 && (
+                  <div className="p-4 text-xs text-gray-600 font-mono text-center">
+                    NO CONVERSATIONS
+                  </div>
+                )}
+                {partners.map(p => {
+                  const unreadCount = messages.filter(m => 
+                    m.sender === p && m.receiver === currentUser && !m.read
+                  ).length;
+                  
+                  return (
+                    <button 
+                      key={p} 
+                      onClick={() => setActivePartner(p)}
+                      className={`w-full text-left p-4 hover:bg-white/5 transition-colors flex items-center gap-3 border-b border-cyber-gray/30 ${activePartner === p ? 'bg-cyber-cyan/10 border-l-2 border-l-cyber-cyan' : ''}`}
+                    >
+                      <div className="w-10 h-10 rounded-full bg-cyber-gray flex items-center justify-center text-lg">
+                        {p[0]}
+                      </div>
+                      <div className="flex-1">
+                        <span className={`font-mono text-sm block ${activePartner === p ? 'text-white' : 'text-gray-400'}`}>
+                          {p}
+                        </span>
+                        {unreadCount > 0 && (
+                          <span className="text-[10px] text-cyber-pink font-mono">
+                            {unreadCount} new
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Main: Chat Area */}
+            <div className="flex-1 flex flex-col bg-cyber-black/20 overflow-hidden">
+              {!activePartner ? (
+                <div className="flex-1 flex items-center justify-center text-gray-600 font-mono flex-col gap-2">
+                  <MessageCircle size={48} className="opacity-50" />
+                  <span>SELECT A CONVERSATION</span>
+                </div>
+              ) : (
+                <>
+                  {/* Chat Header */}
+                  <div className="p-4 border-b border-cyber-gray flex justify-between items-center bg-cyber-dark">
+                    <span className="font-mono font-bold text-white flex items-center gap-2">
+                      <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                      {activePartner}
+                    </span>
+                    <button onClick={onClose} className="text-gray-500 hover:text-white hidden md:block">
+                      <X size={20} />
+                    </button>
+                  </div>
+
+                  {/* Messages */}
+                  <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                    {currentChat.map(msg => {
+                      const isMe = msg.sender === currentUser;
+                      const isEditing = editingId === msg.id;
+                      
+                      return (
+                        <div key={msg.id} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+                          <div className={`max-w-[70%] group relative flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
+                            {isEditing ? (
+                              <div className="w-full flex gap-2">
+                                <input
+                                  value={editText}
+                                  onChange={(e) => setEditText(e.target.value)}
+                                  className="flex-1 bg-cyber-black border border-cyber-cyan p-2 text-xs text-white"
+                                  autoFocus
+                                />
+                                <button onClick={handleSend} className="px-2 bg-cyber-cyan text-black text-xs">
+                                  <Check size={14} />
+                                </button>
+                                <button onClick={cancelEdit} className="px-2 bg-gray-700 text-white text-xs">
+                                  <X size={14} />
+                                </button>
+                              </div>
+                            ) : (
+                              <>
+                                <div className={`p-3 rounded-sm text-sm ${isMe ? 'bg-cyber-cyan/20 border border-cyber-cyan/30 text-white' : 'bg-cyber-gray border border-gray-700 text-gray-300'}`}>
+                                  {msg.content && <p className="whitespace-pre-wrap break-words">{msg.content}</p>}
+                                  {msg.mediaUrl && (
+                                    <div className="mt-2 rounded-sm overflow-hidden border border-white/10">
+                                      <img 
+                                        src={msg.mediaUrl} 
+                                        alt="attachment" 
+                                        className="max-w-full cursor-pointer hover:opacity-90"
+                                        onClick={() => window.open(msg.mediaUrl, '_blank')}
+                                      />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-2 mt-1">
+                                  <span className="text-[10px] text-gray-600 font-mono">
+                                    {new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                  </span>
+                                  {msg.isEdited && (
+                                    <span className="text-[9px] text-gray-600 italic">(edited)</span>
+                                  )}
+                                  {isMe && (
+                                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      <button onClick={() => startEdit(msg)} className="text-gray-500 hover:text-cyber-yellow">
+                                        <Edit2 size={10} />
+                                      </button>
+                                      <button onClick={() => onDeleteMessage(msg.id)} className="text-gray-500 hover:text-red-500">
+                                        <Trash2 size={10} />
+                                      </button>
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div ref={messagesEndRef} />
+                  </div>
+
+                  {/* Input Area */}
+                  <div className="p-4 border-t border-cyber-gray bg-cyber-dark">
+                    {imageUrl && (
+                      <div className="mb-2 relative w-fit">
+                        <img src={imageUrl} alt="preview" className="h-20 rounded border border-cyber-cyan" />
+                        <button 
+                          onClick={() => setImageUrl(null)} 
+                          className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    )}
+                    
+                    {editingId && (
+                      <div className="mb-2 text-xs text-cyber-yellow font-mono flex justify-between items-center bg-cyber-yellow/10 p-2 border border-cyber-yellow/30">
+                        <span>EDITING MESSAGE</span>
+                        <button onClick={cancelEdit} className="hover:text-white">CANCEL</button>
+                      </div>
+                    )}
+                    
+                    <form onSubmit={handleSend} className="flex gap-2">
+                      <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+                      <button 
+                        type="button" 
+                        onClick={() => fileInputRef.current?.click()}
+                        className="p-2 text-gray-500 hover:text-cyber-cyan transition-colors border border-cyber-gray hover:border-cyber-cyan"
+                        disabled={editingId !== null}
+                      >
+                        <ImageIcon size={20} />
+                      </button>
+                      <input 
+                        value={editingId ? editText : inputText}
+                        onChange={(e) => editingId ? setEditText(e.target.value) : setInputText(e.target.value)}
+                        placeholder={editingId ? "Edit message..." : "Type a message..."}
+                        className="flex-1 bg-cyber-black/50 border border-cyber-gray p-2 text-sm text-white focus:border-cyber-cyan focus:outline-none"
+                      />
+                      <button 
+                        type="submit"
+                        className="px-4 py-2 bg-cyber-cyan/10 border border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan hover:text-black transition-all"
+                      >
+                        {editingId ? <Check size={18} /> : <Send size={18} />}
+                      </button>
+                    </form>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // ChatRoom with Edit/Delete/Image
+    const ChatRoom = ({ user, messages, onSendMessage, onDeleteMessage, onEditMessage }) => {
+      const [input, setInput] = useState('');
+      const [imageUrl, setImageUrl] = useState(null);
+      const [editingId, setEditingId] = useState(null);
+      const [editText, setEditText] = useState('');
+      const fileInputRef = useRef(null);
+      const messagesEndRef = useRef(null);
+      
+      useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      }, [messages]);
+
+      const handleSend = (e) => {
+        e.preventDefault();
+        if (editingId) {
+          onEditMessage(editingId, editText);
+          setEditingId(null);
+          setEditText('');
+        } else {
+          if (!input.trim() && !imageUrl) return;
+          onSendMessage(input, imageUrl);
+          setInput('');
+          setImageUrl(null);
+        }
+      };
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            alert('이미지 크기는 5MB 이하여야 합니다.');
+            return;
+          }
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const startEdit = (msg) => {
+        setEditingId(msg.id);
+        setEditText(msg.content);
+        setInput('');
+      };
+
+      const cancelEdit = () => {
+        setEditingId(null);
+        setEditText('');
+      };
+
+      return (
+        <div className="flex flex-col h-[calc(100vh-200px)] bg-cyber-dark border border-cyber-gray clip-corner">
+          <div className="p-4 border-b border-cyber-gray bg-cyber-black/50 flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <Hash size={20} className="text-cyber-cyan" />
+              <h2 className="font-mono font-bold text-white uppercase">Global_Lobby</h2>
+            </div>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            {messages.map((msg) => {
+              const isOwner = msg.author === user.username;
+              const isEditing = editingId === msg.id;
+              
+              return (
+                <div key={msg.id} className="flex gap-4 p-2 group hover:bg-white/5 rounded-sm transition-colors">
+                  <div className="w-10 h-10 rounded-sm border border-cyber-gray bg-cyber-gray flex items-center justify-center shrink-0">
+                    {msg.author[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-cyber-cyan text-sm">{msg.author}</span>
+                      <span className="text-[10px] text-gray-600 font-mono">
+                        {new Date(msg.timestamp).toLocaleTimeString()}
+                      </span>
+                      {msg.isEdited && (
+                        <span className="text-[9px] text-gray-600 italic">(edited)</span>
+                      )}
+                      {isOwner && !isEditing && (
+                        <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button onClick={() => startEdit(msg)} className="text-gray-600 hover:text-cyber-yellow">
+                            <Edit2 size={12} />
+                          </button>
+                          <button onClick={() => onDeleteMessage(msg.id)} className="text-gray-600 hover:text-red-500">
+                            <Trash2 size={12} />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {isEditing ? (
+                      <div className="flex gap-2 mt-2">
+                        <input
+                          value={editText}
+                          onChange={(e) => setEditText(e.target.value)}
+                          className="flex-1 bg-cyber-black border border-cyber-cyan p-2 text-xs text-white"
+                          autoFocus
+                        />
+                        <button onClick={handleSend} className="px-3 py-1 bg-cyber-cyan text-black text-xs font-mono hover:bg-cyber-cyan/80">
+                          SAVE
+                        </button>
+                        <button onClick={cancelEdit} className="px-3 py-1 bg-gray-700 text-white text-xs font-mono hover:bg-gray-600">
+                          CANCEL
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        {msg.content && (
+                          <div className="text-gray-300 text-sm break-words">{msg.content}</div>
+                        )}
+                        {msg.mediaUrl && (
+                          <div className="mt-2 max-w-sm rounded-sm border border-cyber-cyan/30 overflow-hidden bg-black">
+                            <img 
+                              src={msg.mediaUrl} 
+                              alt="chat-media" 
+                              className="w-full cursor-pointer hover:opacity-90"
+                              onClick={() => window.open(msg.mediaUrl, '_blank')}
+                            />
+                          </div>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+            <div ref={messagesEndRef} />
+          </div>
+          <div className="p-4 border-t border-cyber-gray">
+            {imageUrl && (
+              <div className="mb-2 relative w-fit">
+                <img src={imageUrl} alt="preview" className="h-20 rounded border border-cyber-cyan" />
+                <button 
+                  onClick={() => setImageUrl(null)} 
+                  className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full p-1 hover:bg-red-700"
+                >
+                  <X size={12} />
+                </button>
+              </div>
+            )}
+            
+            {editingId && (
+              <div className="mb-2 text-xs text-cyber-yellow font-mono flex justify-between items-center bg-cyber-yellow/10 p-2 border border-cyber-yellow/30">
+                <span>EDITING MESSAGE</span>
+                <button onClick={cancelEdit} className="hover:text-white">CANCEL</button>
+              </div>
+            )}
+            
+            <form onSubmit={handleSend} className="flex gap-2">
+              <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageUpload} />
+              <button 
+                type="button" 
+                onClick={() => fileInputRef.current?.click()}
+                className="p-2 text-gray-500 hover:text-cyber-cyan transition-colors border border-cyber-gray hover:border-cyber-cyan"
+                disabled={editingId !== null}
+              >
+                <ImageIcon size={20} />
+              </button>
+              <input
+                type="text"
+                value={editingId ? editText : input}
+                onChange={(e) => editingId ? setEditText(e.target.value) : setInput(e.target.value)}
+                placeholder={editingId ? "Edit message..." : "Message #Global_Lobby"}
+                className="flex-1 bg-cyber-dark border border-cyber-gray p-2 text-sm text-white focus:border-cyber-cyan focus:outline-none"
+              />
+              <CyberButton type="submit" variant="primary" className="px-4">
+                {editingId ? <Check size={18} /> : <Send size={18} />}
+              </CyberButton>
+            </form>
+          </div>
+        </div>
+      );
+    };
+    
+    // CreatePostModal with Image Upload and Color Picker
+    const CreatePostModal = ({ isOpen, onClose, onSubmit, initialData, isAdmin }) => {
+      const [title, setTitle] = useState('');
+      const [content, setContent] = useState('');
+      const [tags, setTags] = useState('');
+      const [isNotice, setIsNotice] = useState(false);
+      const [imageUrl, setImageUrl] = useState(null);
+      const [selectedColor, setSelectedColor] = useState('#00d9ff');
+      const [showColorHelp, setShowColorHelp] = useState(false);
+      const [lastFocusedField, setLastFocusedField] = useState('content');
+      
+      const fileInputRef = useRef(null);
+      const titleInputRef = useRef(null);
+      const contentTextareaRef = useRef(null);
+
+      useEffect(() => {
+        if (isOpen && initialData) {
+          setTitle(initialData.title);
+          setContent(initialData.content);
+          setTags(initialData.tags.join(', '));
+          setIsNotice(initialData.type === 'NOTICE');
+          setImageUrl(initialData.mediaUrl || null);
+        } else if (isOpen) {
+          setTitle('');
+          setContent('');
+          setTags('');
+          setIsNotice(false);
+          setImageUrl(null);
+        }
+      }, [isOpen, initialData]);
+
+      if (!isOpen) return null;
+
+      const applyColorToSelection = () => {
+        const targetRef = lastFocusedField === 'title' ? titleInputRef : contentTextareaRef;
+        const targetValue = lastFocusedField === 'title' ? title : content;
+        const setTargetValue = lastFocusedField === 'title' ? setTitle : setContent;
+        
+        const element = targetRef.current;
+        if (!element) return;
+
+        const start = element.selectionStart;
+        const end = element.selectionEnd;
+        
+        if (start === null || end === null || start === end) {
+          alert('색상을 적용할 텍스트를 먼저 드래그하여 선택해주세요!');
+          return;
+        }
+
+        const selectedText = targetValue.substring(start, end);
+        const beforeText = targetValue.substring(0, start);
+        const afterText = targetValue.substring(end);
+
+        const coloredText = `[color=${selectedColor}]${selectedText}[/color]`;
+        const newValue = beforeText + coloredText + afterText;
+
+        setTargetValue(newValue);
+        
+        setTimeout(() => {
+          element.focus();
+          element.setSelectionRange(start + coloredText.length, start + coloredText.length);
+        }, 0);
+      };
+
+      const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          if (file.size > 5 * 1024 * 1024) {
+            alert('이미지 크기는 5MB 이하여야 합니다.');
+            return;
+          }
+          
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            setImageUrl(reader.result);
+          };
+          reader.readAsDataURL(file);
+        }
+      };
+
+      const handleRemoveImage = () => {
+        setImageUrl(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      };
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        const tagArray = tags.split(',').map(t => t.trim()).filter(Boolean);
+        onSubmit(title, content, tagArray, false, imageUrl, false, isNotice);
+        onClose();
+      };
+
+      return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4">
+          <div className="w-full max-w-2xl max-h-[90vh] flex flex-col bg-cyber-dark border border-cyber-cyan clip-corner">
+            <div className="flex justify-between items-center p-6 border-b border-cyber-gray">
+              <h2 className="text-xl font-mono font-bold text-cyber-cyan flex items-center gap-2">
+                <Cpu size={20} />
+                {initialData ? 'UPDATE' : 'NEW POST'}
+              </h2>
+              <button onClick={onClose} className="text-gray-500 hover:text-white"><X size={24} /></button>
+            </div>
+            
+            {/* Color Picker Toolbar */}
+            <div className="bg-cyber-gray/50 border-b border-cyber-gray p-3 flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-2 bg-cyber-black/50 p-1.5 border border-cyber-gray rounded-sm relative">
+                <Palette size={14} className="text-gray-500 ml-1" />
+                <input 
+                  type="color" 
+                  value={selectedColor}
+                  onChange={(e) => setSelectedColor(e.target.value)}
+                  className="w-8 h-8 bg-transparent border-none cursor-pointer"
+                  title="색상 선택"
+                />
+                <button 
+                  type="button"
+                  onClick={applyColorToSelection}
+                  className="text-xs font-mono text-cyber-cyan hover:text-white px-3 border-l border-gray-700 h-8 transition-colors"
+                >
+                  COLOR
+                </button>
+                <button 
+                  type="button" 
+                  onMouseEnter={() => setShowColorHelp(true)} 
+                  onMouseLeave={() => setShowColorHelp(false)}
+                  className="text-gray-600 hover:text-cyber-yellow transition-colors"
+                >
+                  <HelpCircle size={14} />
+                </button>
+                {showColorHelp && (
+                  <div className="absolute top-full left-0 mt-2 p-4 bg-cyber-black border border-cyber-yellow text-[11px] font-mono text-cyber-yellow z-50 w-72 shadow-2xl leading-relaxed">
+                    <span className="text-white font-bold block mb-1">[색상 사용법]</span>
+                    1. 제목 또는 본문 텍스트를 드래그하여 선택<br/>
+                    2. 왼쪽 색상 피커에서 원하는 색 선택<br/>
+                    3. COLOR 버튼 클릭하여 적용<br/>
+                    <span className="text-gray-500 mt-2 block italic text-[10px]">Tip: 마지막에 클릭한 입력창에 적용됩니다</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="text-[10px] font-mono text-gray-500">
+                선택된 색: <span style={{color: selectedColor}}>■ {selectedColor}</span>
+              </div>
+            </div>
+            
+            <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1">
+              <div>
+                <label className="block text-[10px] font-mono text-gray-500 mb-1 uppercase">Title</label>
+                <input 
+                  ref={titleInputRef}
+                  type="text" 
+                  value={title} 
+                  onChange={(e) => setTitle(e.target.value)}
+                  onFocus={() => setLastFocusedField('title')}
+                  placeholder="Enter subject..." 
+                  className="w-full bg-cyber-black border border-cyber-gray p-4 text-white" 
+                  required 
+                />
+              </div>
+              <div>
+                <label className="block text-[10px] font-mono text-gray-500 mb-1 uppercase">Content</label>
+                <textarea 
+                  ref={contentTextareaRef}
+                  value={content} 
+                  onChange={(e) => setContent(e.target.value)}
+                  onFocus={() => setLastFocusedField('content')}
+                  placeholder="Write your message..." 
+                  rows={12} 
+                  className="w-full bg-cyber-black border border-cyber-gray p-4 text-gray-300 resize-none" 
+                  required 
+                />
+              </div>
+              
+              {/* Image Upload Section */}
+              <div>
+                <label className="block text-[10px] font-mono text-gray-500 mb-2 uppercase">Image (Optional)</label>
+                <input 
+                  type="file" 
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+                {!imageUrl ? (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full border-2 border-dashed border-cyber-gray hover:border-cyber-cyan p-8 flex flex-col items-center gap-2 transition-colors bg-cyber-black/50"
+                  >
+                    <ImageIcon size={32} className="text-gray-500" />
+                    <span className="text-xs font-mono text-gray-500">CLICK TO UPLOAD IMAGE</span>
+                    <span className="text-[10px] font-mono text-gray-600">MAX 5MB</span>
+                  </button>
+                ) : (
+                  <div className="relative">
+                    <img 
+                      src={imageUrl} 
+                      alt="Preview" 
+                      className="w-full max-h-64 object-contain bg-cyber-black border border-cyber-cyan"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 bg-red-600 text-white p-2 rounded-sm hover:bg-red-700 transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-[10px] font-mono text-gray-500 mb-1 uppercase">Tags</label>
+                <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="tech, life..." className="w-full bg-cyber-black border border-cyber-gray p-4 text-cyber-cyan font-mono text-sm" />
+              </div>
+              {isAdmin && (
+                <div>
+                  <button type="button" onClick={() => setIsNotice(!isNotice)} className={`flex items-center gap-2 text-[10px] font-mono px-3 py-1.5 border ${isNotice ? 'border-cyber-yellow text-cyber-yellow bg-cyber-yellow/10' : 'border-cyber-gray text-gray-500'}`}>
+                    <Megaphone size={12} /> NOTICE: {isNotice ? 'ON' : 'OFF'}
+                  </button>
+                </div>
+              )}
+            </form>
+            <div className="flex justify-end gap-4 p-6 border-t border-cyber-gray">
+              <button type="button" onClick={onClose} className="px-6 py-2 text-xs font-mono text-gray-500 hover:text-white">CANCEL</button>
+              <CyberButton type="submit" variant="primary" onClick={handleSubmit}>POST</CyberButton>
+            </div>
+          </div>
+        </div>
+      );
+    };
+    
+    // CommentSection Component - NEW!
+    const CommentSection = ({ comments, postId, user, onAddComment, onDeleteComment }) => {
+      const [newComment, setNewComment] = useState('');
+      
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!newComment.trim()) return;
+        onAddComment(postId, newComment);
+        setNewComment('');
+      };
+
+      return (
+        <div className="mt-6 border-t border-cyber-gray/30 pt-4">
+          <h4 className="text-xs font-mono text-gray-500 mb-4 flex items-center gap-2">
+            <CornerDownRight size={14} />
+            COMMENTS ({comments.length})
+          </h4>
+          
+          {/* New Comment Input */}
+          <form onSubmit={handleSubmit} className="mb-6 flex gap-2">
+            <div className="w-8 h-8 bg-cyber-gray flex items-center justify-center shrink-0 rounded-sm">
+              {user.username[0]}
+            </div>
+            <input 
+              type="text"
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="댓글을 입력하세요..."
+              className="flex-1 bg-cyber-dark border border-cyber-gray p-2 text-sm text-white focus:border-cyber-cyan focus:outline-none"
+            />
+            <CyberButton type="submit" variant="primary" className="px-4 py-1 text-xs">
+              POST
+            </CyberButton>
+          </form>
+
+          {/* Comment List */}
+          <div className="space-y-3">
+            {comments.map(comment => {
+              const isOwner = comment.author === user.username;
+              const canDelete = isOwner || user.role === 'ADMIN' || user.role === 'MODERATOR';
+              
+              return (
+                <div key={comment.id} className="bg-cyber-black/40 border border-cyber-gray/50 p-3 rounded-sm relative group">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-mono text-xs font-bold text-cyber-cyan">
+                      {comment.author}
+                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600 text-[10px] font-mono">
+                        {new Date(comment.timestamp).toLocaleTimeString()}
+                      </span>
+                      {canDelete && (
+                        <button 
+                          onClick={() => onDeleteComment(postId, comment.id)}
+                          className="text-gray-600 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-gray-300 text-sm">{comment.content}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      );
+    };
+    
+    // PostList with Comments, Images, and Block Filter!
+    const PostList = ({ posts, user, blockedUsers, onLike, onDislike, onDeleteRequest, onEditRequest, onUserClick, onAddComment, onDeleteComment }) => {
+      const [expandedPosts, setExpandedPosts] = useState(new Set());
+      
+      const toggleComments = (postId) => {
+        const newExpanded = new Set(expandedPosts);
+        if (newExpanded.has(postId)) {
+          newExpanded.delete(postId);
+        } else {
+          newExpanded.add(postId);
+        }
+        setExpandedPosts(newExpanded);
+      };
+      
+      const formatDate = (isoString) => {
+        const d = new Date(isoString);
+        return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+      };
+
+      const parseContent = (content) => {
+        const parts = content.split(/(\[color=[^\]]+\][\s\S]*?\[\/color\])/g);
+        return parts.map((part, index) => {
+          const match = part.match(/^\[color=([^\]]+)\]([\s\S]*?)\[\/color\]$/);
+          if (match) return <span key={index} style={{ color: match[1] }}>{match[2]}</span>;
+          return <span key={index}>{part}</span>;
+        });
+      };
+
+      return (
+        <div className="space-y-6">
+          {posts.map((post) => {
+            const isLiked = post.likedBy.includes(user.username);
+            const isDisliked = (post.dislikedBy || []).includes(user.username);
+            const isOwner = post.author === user.username;
+            const isNotice = post.type === 'NOTICE';
+            const canDelete = isOwner || user.role === 'ADMIN' || user.role === 'MODERATOR';
+            const showComments = expandedPosts.has(post.id);
+            const isBlocked = blockedUsers.includes(post.author);
+
+            return (
+              <article key={post.id} className={`relative border p-6 clip-corner ${isBlocked ? 'opacity-50 bg-red-900/10 border-red-900/30' : isNotice ? 'bg-cyber-yellow/5 border-cyber-yellow/30' : 'bg-cyber-dark border-cyber-gray hover:border-cyber-cyan/50'}`}>
+                {isNotice && <div className="absolute top-0 left-0 bg-cyber-yellow text-black text-[10px] font-mono font-bold px-2 py-0.5">NOTICE</div>}
+                {isBlocked && <div className="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-mono font-bold px-2 py-0.5">BLOCKED</div>}
+                
+                <div className="flex justify-between items-start mb-4 mt-2">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 bg-cyber-gray border rounded-sm flex items-center justify-center cursor-pointer ${isBlocked ? 'blur-sm' : isNotice ? 'border-cyber-yellow' : 'border-cyber-cyan'}`} onClick={() => onUserClick(post.author)}>
+                      {post.author[0]}
+                    </div>
+                    <div>
+                      <h3 className={`font-bold cursor-pointer ${isBlocked ? 'blur-sm text-gray-600' : isNotice ? 'text-cyber-yellow' : 'text-gray-200 hover:text-cyber-cyan'}`} onClick={() => onUserClick(post.author)}>{post.author}</h3>
+                      <div className="flex items-center gap-1 text-xs text-gray-500 font-mono">
+                        <Clock size={10} />
+                        <span>{formatDate(post.timestamp)}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {isOwner && <button onClick={() => onEditRequest(post)} className="text-gray-600 hover:text-cyber-yellow p-2"><Edit2 size={16} /></button>}
+                    {canDelete && <button onClick={() => onDeleteRequest(post.id)} className="text-gray-600 hover:text-red-500 p-2"><Trash2 size={16} /></button>}
+                  </div>
+                </div>
+
+                {isBlocked ? (
+                  <div className="text-center py-8 border border-red-900/50 bg-red-900/10">
+                    <ShieldBan size={32} className="mx-auto mb-2 text-red-500 opacity-50" />
+                    <p className="text-red-500 font-mono text-sm">BLOCKED USER CONTENT</p>
+                    <p className="text-xs text-gray-600 font-mono mt-1">Click profile to unblock</p>
+                  </div>
+                ) : (
+                  <>
+                    <h2 className={`text-xl font-bold mb-2 ${isNotice ? 'text-cyber-yellow' : 'text-white'}`}>
+                      {isNotice && <Megaphone size={18} className="inline mr-2 mb-1" />}
+                      {parseContent(post.title)}
+                    </h2>
+                    <div className="leading-relaxed mb-4 whitespace-pre-wrap text-gray-300">
+                      {parseContent(post.content)}
+                    </div>
+
+                    {/* Image Display */}
+                    {post.mediaUrl && (
+                      <div className="mb-4 rounded-sm overflow-hidden border border-cyber-cyan/30 bg-black">
+                        <img 
+                          src={post.mediaUrl} 
+                          alt="Post image" 
+                          className="w-full max-h-96 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => window.open(post.mediaUrl, '_blank')}
+                        />
+                      </div>
+                    )}
+
+                    <div className="flex gap-2 mb-6 flex-wrap">
+                      {post.tags.map(tag => (
+                        <span key={tag} className={`text-xs font-mono px-2 py-1 ${isNotice ? 'text-cyber-yellow bg-cyber-yellow/10' : 'text-cyber-cyan bg-cyber-cyan/5'}`}>
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-6 border-t border-cyber-gray pt-4 text-gray-500">
+                      <button onClick={() => onLike(post.id)} className={`flex items-center gap-2 ${isLiked ? 'text-cyber-pink' : 'text-gray-500 hover:text-cyber-pink'}`}>
+                        <Heart size={18} className={isLiked ? 'fill-cyber-pink' : ''} />
+                        <span className="font-mono text-sm">{post.likes}</span>
+                      </button>
+                      <button onClick={() => onDislike(post.id)} className={`flex items-center gap-2 ${isDisliked ? 'text-gray-200' : 'text-gray-500 hover:text-gray-300'}`}>
+                        <HeartCrack size={18} />
+                        <span className="font-mono text-sm">{post.dislikes || 0}</span>
+                      </button>
+                      <button onClick={() => toggleComments(post.id)} className={`flex items-center gap-2 ${showComments ? 'text-cyber-cyan' : 'text-gray-500 hover:text-cyber-cyan'}`}>
+                        <MessageSquare size={18} />
+                        <span className="font-mono text-sm">{showComments ? 'HIDE' : `COMMENTS (${post.comments.length})`}</span>
+                      </button>
+                    </div>
+                    
+                    {/* Show Comments */}
+                    {showComments && (
+                      <CommentSection 
+                        comments={post.comments}
+                        postId={post.id}
+                        user={user}
+                        onAddComment={onAddComment}
+                        onDeleteComment={onDeleteComment}
+                      />
+                    )}
+                  </>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      );
+    };
+    
+    // MAIN APP
+    function App() {
+      const [posts, setPosts] = useState(() => {
+        const saved = localStorage.getItem('nh_posts');
+        if (!saved) return INITIAL_POSTS;
+        const parsed = JSON.parse(saved);
+        return parsed.map(p => ({
+          ...p,
+          dislikes: p.dislikes || 0,
+          dislikedBy: p.dislikedBy || [],
+          type: p.type || 'POST',
+          comments: p.comments || [],
+          mediaUrl: p.mediaUrl || undefined
+        }));
+      });
+
+      const [chatMessages, setChatMessages] = useState(() => {
+        const saved = localStorage.getItem('nh_chat');
+        return saved ? JSON.parse(saved) : [{
+          id: '1',
+          author: 'System_Daemon',
+          avatar: '',
+          content: 'Neural link established. Welcome to the Global Lobby.',
+          timestamp: new Date().toISOString()
+        }];
+      });
+
+      const [notifications, setNotifications] = useState(() => {
+        const saved = localStorage.getItem('nh_notifications');
+        return saved ? JSON.parse(saved) : INITIAL_NOTIFICATIONS;
+      });
+
+      const [user, setUser] = useState(() => {
+        const saved = localStorage.getItem('nh_user');
+        return saved ? JSON.parse(saved) : CURRENT_USER;
+      });
+
+      const [messages, setMessages] = useState(() => {
+        const saved = localStorage.getItem('nh_messages');
+        return saved ? JSON.parse(saved) : [];
+      });
+
+      const [blockedUsers, setBlockedUsers] = useState(() => {
+        const saved = localStorage.getItem('nh_blocked');
+        return saved ? JSON.parse(saved) : [];
+      });
+
+      useEffect(() => { localStorage.setItem('nh_posts', JSON.stringify(posts)); }, [posts]);
+      useEffect(() => { localStorage.setItem('nh_chat', JSON.stringify(chatMessages)); }, [chatMessages]);
+      useEffect(() => { localStorage.setItem('nh_notifications', JSON.stringify(notifications)); }, [notifications]);
+      useEffect(() => { localStorage.setItem('nh_user', JSON.stringify(user)); }, [user]);
+      useEffect(() => { localStorage.setItem('nh_messages', JSON.stringify(messages)); }, [messages]);
+      useEffect(() => { localStorage.setItem('nh_blocked', JSON.stringify(blockedUsers)); }, [blockedUsers]);
+
+      const [isModalOpen, setModalOpen] = useState(false);
+      const [editingPost, setEditingPost] = useState(null);
+      const [isAdminModalOpen, setAdminModalOpen] = useState(false);
+      const [isNicknameModalOpen, setNicknameModalOpen] = useState(false);
+      const [isAvatarModalOpen, setAvatarModalOpen] = useState(false);
+      const [isNetworkModalOpen, setNetworkModalOpen] = useState(false);
+      const [profileTarget, setProfileTarget] = useState(null);
+      const [isMessageOpen, setMessageOpen] = useState(false);
+      const [messagePartner, setMessagePartner] = useState(null);
+      const [deleteConfirmId, setDeleteConfirmId] = useState(null);
+      const [isSidebarOpen, setSidebarOpen] = useState(false);
+      const [showNotifications, setShowNotifications] = useState(false);
+      const [activeTab, setActiveTab] = useState(Tab.FEED);
+      const [searchQuery, setSearchQuery] = useState('');
+
+      const latestNotice = useMemo(() => {
+        return posts.filter(p => p.type === 'NOTICE').sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+      }, [posts]);
+
+      const parseNeonText = (text) => {
+        const parts = text.split(/(\[color=[^\]]+\][\s\S]*?\[\/color\])/g);
+        return parts.map((part, index) => {
+          const match = part.match(/^\[color=([^\]]+)\]([\s\S]*?)\[\/color\]$/);
+          if (match) return <span key={index} style={{ color: match[1] }}>{match[2]}</span>;
+          return <span key={index}>{part}</span>;
+        });
+      };
+
+      const handleAdminAuthSuccess = (role) => {
+        setUser({ ...user, role });
+        alert(`ACCESS GRANTED: ${role}`);
+      };
+
+      const handleDeactivateAdmin = () => {
+        setUser({ ...user, role: 'USER' });
+        alert("ADMIN PROTOCOLS TERMINATED.");
+      };
+
+      const handleUpdateNickname = (newName) => {
+        setUser({ ...user, username: newName });
+      };
+
+      const handleSendChatMessage = (content, mediaUrl) => {
+        const newMessage = {
+          id: Date.now().toString(),
+          author: user.username,
+          avatar: user.avatar,
+          content,
+          mediaUrl: mediaUrl || undefined,
+          timestamp: new Date().toISOString(),
+          isEdited: false
+        };
+        setChatMessages([...chatMessages, newMessage]);
+      };
+      
+      const handleDeleteChatMessage = (messageId) => {
+        setChatMessages(chatMessages.filter(m => m.id !== messageId));
+      };
+      
+      const handleEditChatMessage = (messageId, newContent) => {
+        setChatMessages(chatMessages.map(m => 
+          m.id === messageId ? { ...m, content: newContent, isEdited: true } : m
+        ));
+      };
+
+      const handleSavePost = (title, content, tags, isAiEnhanced, mediaUrl, isSpoiler, isNotice) => {
+        if (editingPost) {
+          setPosts(posts.map(p => p.id === editingPost.id ? {
+            ...p, title, content, tags, mediaUrl: mediaUrl || undefined, type: isNotice ? 'NOTICE' : 'POST'
+          } : p));
+          setEditingPost(null);
+        } else {
+          const newPost = {
+            id: Date.now().toString(),
+            author: user.username,
+            title, content, tags,
+            mediaUrl: mediaUrl || undefined,
+            likes: 0, likedBy: [],
+            dislikes: 0, dislikedBy: [],
+            comments: [],
+            timestamp: new Date().toISOString(),
+            isAiEnhanced: false,
+            type: isNotice ? 'NOTICE' : 'POST'
+          };
+          setPosts([newPost, ...posts]);
+        }
+        setModalOpen(false);
+      };
+
+      const handleEditRequest = (post) => {
+        setEditingPost(post);
+        setModalOpen(true);
+      };
+
+      const handleDeleteRequest = (id) => {
+        setDeleteConfirmId(id);
+      };
+
+      const confirmDelete = () => {
+        if (deleteConfirmId) {
+          setPosts(posts.filter(p => p.id !== deleteConfirmId));
+          setDeleteConfirmId(null);
+        }
+      };
+
+      const handleToggleLike = (id) => {
+        setPosts(posts.map(post => {
+          if (post.id !== id) return post;
+          const isLiked = post.likedBy.includes(user.username);
+          const isDisliked = (post.dislikedBy || []).includes(user.username);
+          
+          let newLikes = post.likes;
+          let newLikedBy = [...post.likedBy];
+          let newDislikes = post.dislikes || 0;
+          let newDislikedBy = [...(post.dislikedBy || [])];
+
+          if (isDisliked) {
+            newDislikes--;
+            newDislikedBy = newDislikedBy.filter(u => u !== user.username);
+          }
+
+          if (isLiked) {
+            newLikes--;
+            newLikedBy = newLikedBy.filter(u => u !== user.username);
+          } else {
+            newLikes++;
+            newLikedBy.push(user.username);
+          }
+
+          return { ...post, likes: newLikes, likedBy: newLikedBy, dislikes: newDislikes, dislikedBy: newDislikedBy };
+        }));
+      };
+
+      const handleToggleDislike = (id) => {
+        setPosts(posts.map(post => {
+          if (post.id !== id) return post;
+          const isLiked = post.likedBy.includes(user.username);
+          const isDisliked = (post.dislikedBy || []).includes(user.username);
+          
+          let newLikes = post.likes;
+          let newLikedBy = [...post.likedBy];
+          let newDislikes = post.dislikes || 0;
+          let newDislikedBy = [...(post.dislikedBy || [])];
+
+          if (isLiked) {
+            newLikes--;
+            newLikedBy = newLikedBy.filter(u => u !== user.username);
+          }
+
+          if (isDisliked) {
+            newDislikes--;
+            newDislikedBy = newDislikedBy.filter(u => u !== user.username);
+          } else {
+            newDislikes++;
+            newDislikedBy.push(user.username);
+          }
+
+          return { ...post, likes: newLikes, likedBy: newLikedBy, dislikes: newDislikes, dislikedBy: newDislikedBy };
+        }));
+      };
+      
+      // NEW: Add Comment Handler
+      const handleAddComment = (postId, content) => {
+        const newComment = {
+          id: Date.now().toString(),
+          author: user.username,
+          content,
+          timestamp: new Date().toISOString()
+        };
+        
+        setPosts(posts.map(post => {
+          if (post.id === postId) {
+            return { ...post, comments: [...post.comments, newComment] };
+          }
+          return post;
+        }));
+      };
+      
+      // NEW: Delete Comment Handler
+      const handleDeleteComment = (postId, commentId) => {
+        setPosts(posts.map(post => {
+          if (post.id === postId) {
+            return { 
+              ...post, 
+              comments: post.comments.filter(c => c.id !== commentId) 
+            };
+          }
+          return post;
+        }));
+      };
+
+      const handleUserClick = (username) => {
+        setProfileTarget({ username });
+      };
+      
+      const handleBlockUser = (username) => {
+        if (blockedUsers.includes(username)) {
+          setBlockedUsers(blockedUsers.filter(u => u !== username));
+          alert(`${username} has been unblocked.`);
+        } else {
+          setBlockedUsers([...blockedUsers, username]);
+          alert(`${username} has been blocked.`);
+        }
+      };
+      
+      const handleStartMessage = (username) => {
+        setMessagePartner(username);
+        setMessageOpen(true);
+      };
+      
+      const handleSendMessage = (receiver, content, mediaUrl) => {
+        const newMessage = {
+          id: Date.now().toString(),
+          sender: user.username,
+          receiver,
+          content,
+          mediaUrl: mediaUrl || undefined,
+          timestamp: new Date().toISOString(),
+          read: false,
+          isEdited: false
+        };
+        setMessages([...messages, newMessage]);
+      };
+      
+      const handleDeleteMessage = (messageId) => {
+        setMessages(messages.filter(m => m.id !== messageId));
+      };
+      
+      const handleEditMessage = (messageId, newContent) => {
+        setMessages(messages.map(m => 
+          m.id === messageId ? { ...m, content: newContent, isEdited: true } : m
+        ));
+      };
+
+      const formatDate = (iso) => {
+        const d = new Date(iso);
+        return `${d.getHours()}:${String(d.getMinutes()).padStart(2, '0')}`;
+      };
+
+      const handleNotificationClick = () => {
+        if (!showNotifications) {
+          setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+        }
+        setShowNotifications(!showNotifications);
+      };
+
+      const getFilteredAndSortedPosts = () => {
+        let result = posts.filter(post => {
+          const q = searchQuery.toLowerCase().trim();
+          const isNotice = activeTab === Tab.NOTICE;
+          if (isNotice && post.type !== 'NOTICE') return false;
+          if (!isNotice && post.type === 'NOTICE') return false;
+          if (!q) return true;
+          if (q.startsWith('#')) {
+            const tagQuery = q.replace('#', '');
+            return post.tags.some(tag => tag.toLowerCase().includes(tagQuery));
+          } else {
+            return post.title.toLowerCase().includes(q) || post.content.toLowerCase().includes(q);
+          }
+        });
+
+        if (activeTab === Tab.PROFILE) result = result.filter(p => p.author === user.username);
+        if (activeTab === Tab.POPULAR) result = [...result].sort((a, b) => b.likes - a.likes);
+        else if (activeTab === Tab.RANDOM) result = [...result].sort(() => 0.5 - Math.random());
+        else result = [...result].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        
+        return result;
+      };
+
+      const displayedPosts = useMemo(() => getFilteredAndSortedPosts(), [posts, searchQuery, activeTab, user.username]);
+      const hasPrivileges = user.role === 'ADMIN' || user.role === 'MODERATOR';
+
+      const SidebarContent = () => (
+        <>
+          <div className="bg-cyber-dark border border-cyber-gray p-6 clip-corner mb-6">
+            <div className="flex flex-col gap-2">
+              <button onClick={() => { setActiveTab(Tab.CHAT); setSidebarOpen(false); }} className={`flex items-center gap-3 p-3 font-mono text-sm ${activeTab === Tab.CHAT ? 'bg-cyber-cyan/10 text-cyber-cyan border-l-2 border-cyber-cyan' : 'text-gray-400 hover:text-white'}`}>
+                <Radio size={18} /> LIVE_CHAT
+              </button>
+              <button onClick={() => { setActiveTab(Tab.PROFILE); setSidebarOpen(false); }} className={`flex items-center gap-3 p-3 font-mono text-sm ${activeTab === Tab.PROFILE ? 'bg-cyber-cyan/10 text-cyber-cyan border-l-2 border-cyber-cyan' : 'text-gray-400 hover:text-white'}`}>
+                <UserIcon size={18} /> MY_PROFILE
+              </button>
+              <div className="border-t border-cyber-gray my-4"></div>
+              <button onClick={() => { setMessageOpen(true); setSidebarOpen(false); }} className="flex items-center gap-3 p-3 font-mono text-sm text-gray-400 hover:text-cyber-pink">
+                <MessageCircle size={18} /> MESSAGES
+              </button>
+              <button onClick={() => { setNicknameModalOpen(true); setSidebarOpen(false); }} className="flex items-center gap-3 p-3 font-mono text-sm text-gray-400 hover:text-cyber-yellow">
+                <Edit3 size={18} /> CHANGE_ID
+              </button>
+              <button onClick={() => { setAvatarModalOpen(true); setSidebarOpen(false); }} className="flex items-center gap-3 p-3 font-mono text-sm text-gray-400 hover:text-cyber-yellow">
+                <ImageIcon size={18} /> ICON
+              </button>
+              <button onClick={() => { setNetworkModalOpen(true); setSidebarOpen(false); }} className="flex items-center gap-3 p-3 font-mono text-sm text-gray-400 hover:text-green-400">
+                <Globe size={18} /> NETWORK
+              </button>
+              <button onClick={() => { if (hasPrivileges) { handleDeactivateAdmin(); } else { setAdminModalOpen(true); } setSidebarOpen(false); }} className={`flex items-center gap-3 p-3 font-mono text-sm ${hasPrivileges ? 'text-cyber-pink border-l-2 border-cyber-pink bg-cyber-pink/10' : 'text-gray-500 hover:text-white'}`}>
+                <ShieldAlert size={18} /> {hasPrivileges ? `${user.role}` : 'ADMIN'}
+              </button>
+            </div>
+          </div>
+        </>
+      );
+
+      return (
+        <div className="min-h-screen bg-cyber-black text-gray-300 pb-20">
+          <nav className="sticky top-0 z-40 bg-cyber-black/90 backdrop-blur-md border-b border-cyber-cyan/30">
+            <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-cyber-cyan text-cyber-black p-1 font-bold">NH</div>
+                <div className="hidden md:block text-white font-mono font-bold tracking-[0.2em]">
+                  NEO<span className="text-cyber-cyan">HEAVEN</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 flex-1 justify-end">
+                <div className="flex items-center gap-1 mr-2">
+                  <button onClick={() => setActiveTab(Tab.FEED)} className={`px-3 py-1 text-xs font-mono border ${activeTab === Tab.FEED ? 'border-cyber-cyan text-cyber-cyan bg-cyber-cyan/10' : 'border-transparent text-gray-500 hover:text-white'}`}>최신순</button>
+                  <button onClick={() => setActiveTab(Tab.NOTICE)} className={`px-3 py-1 text-xs font-mono border ${activeTab === Tab.NOTICE ? 'border-cyber-yellow text-cyber-yellow bg-cyber-yellow/10' : 'border-transparent text-gray-500 hover:text-white'}`}>공지</button>
+                  <button onClick={() => setActiveTab(Tab.POPULAR)} className={`px-3 py-1 text-xs font-mono border ${activeTab === Tab.POPULAR ? 'border-cyber-pink text-cyber-pink bg-cyber-pink/10' : 'border-transparent text-gray-500 hover:text-white'}`}>인기순</button>
+                  <button onClick={() => setActiveTab(Tab.RANDOM)} className={`px-3 py-1 text-xs font-mono border ${activeTab === Tab.RANDOM ? 'border-cyber-yellow text-cyber-yellow bg-cyber-yellow/10' : 'border-transparent text-gray-500 hover:text-white'}`}>랜덤</button>
+                </div>
+                <div className="hidden lg:block relative w-48">
+                  <input type="text" placeholder="#TAG" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-cyber-dark/50 border border-cyber-gray py-1 pl-2 pr-2 text-xs font-mono text-white" />
+                </div>
+                <div className="relative">
+                  <button onClick={handleNotificationClick} className="text-gray-400 hover:text-cyber-pink relative">
+                    <Bell size={20} />
+                    {notifications.some(n => !n.read) && <span className="absolute -top-1 -right-1 w-2 h-2 bg-cyber-pink rounded-full"></span>}
+                  </button>
+                  {showNotifications && (
+                    <div className="absolute right-0 top-10 w-64 bg-cyber-dark border border-cyber-gray z-50 clip-corner">
+                      <div className="p-3 border-b border-cyber-gray font-mono text-xs text-cyber-cyan font-bold">NOTIFICATIONS</div>
+                      <div className="max-h-60 overflow-y-auto">
+                        {notifications.length === 0 ? (
+                          <div className="p-4 text-xs text-gray-500 text-center font-mono">NO SIGNALS</div>
+                        ) : notifications.map(n => (
+                          <div key={n.id} className="p-3 border-b border-cyber-gray/30 hover:bg-white/5">
+                            <p className="text-xs text-gray-300 mb-1">{n.message}</p>
+                            <span className="text-[10px] text-cyber-pink font-mono">{formatDate(n.timestamp)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <div className="hidden sm:flex items-center gap-3 border-l border-cyber-gray pl-4">
+                  <div className="text-xs font-mono text-cyber-cyan">{user.username}</div>
+                  <div className="w-8 h-8 bg-cyber-gray border border-cyber-cyan rounded-sm cursor-pointer flex items-center justify-center" onClick={() => handleUserClick(user.username)}>
+                    {user.username[0]}
+                  </div>
+                </div>
+                <button className="text-white hover:text-cyber-cyan" onClick={() => setSidebarOpen(true)}>
+                  <Menu size={24} />
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          <div className="lg:hidden px-4 py-2 bg-cyber-black/90 border-b border-cyber-gray sticky top-16 z-30">
+            <input type="text" placeholder="#TAG..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full bg-cyber-dark/50 border border-cyber-gray py-1 pl-2 pr-2 text-xs font-mono text-white" />
+          </div>
+
+          {isSidebarOpen && (
+            <div className="fixed inset-0 z-50 flex">
+              <div className="absolute inset-0 bg-black/80" onClick={() => setSidebarOpen(false)}></div>
+              <div className="relative w-64 bg-cyber-black border-r border-cyber-cyan/30 h-full p-6 overflow-y-auto">
+                <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 text-gray-500 hover:text-white">
+                  <X size={24} />
+                </button>
+                <div className="mt-8"><SidebarContent /></div>
+              </div>
+            </div>
+          )}
+
+          <main className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <aside className="hidden lg:block space-y-8 sticky top-24 h-fit">
+              <SidebarContent />
+            </aside>
+
+            <section className="lg:col-span-3 space-y-6">
+              {activeTab === Tab.CHAT ? (
+                <ChatRoom 
+                  user={user} 
+                  messages={chatMessages} 
+                  onSendMessage={handleSendChatMessage}
+                  onDeleteMessage={handleDeleteChatMessage}
+                  onEditMessage={handleEditChatMessage}
+                />
+              ) : (
+                <>
+                  <div className="flex flex-col gap-4 mb-2">
+                    <div className="flex items-center justify-between">
+                      {(activeTab !== Tab.NOTICE || hasPrivileges) && (
+                        <CyberButton onClick={() => { setEditingPost(null); setModalOpen(true); }}>
+                          + UPLOAD
+                        </CyberButton>
+                      )}
+                    </div>
+                    {latestNotice && (
+                      <div onClick={() => setActiveTab(Tab.NOTICE)} className="bg-cyber-yellow/5 border border-cyber-yellow/30 px-4 py-2 cursor-pointer hover:bg-cyber-yellow/10 flex items-center gap-3">
+                        <Megaphone size={14} className="text-cyber-yellow shrink-0" />
+                        <div className="font-mono text-xs text-cyber-yellow font-bold truncate flex-1">
+                          LATEST_NOTICE: {parseNeonText(latestNotice.title)}
+                        </div>
+                        <Info size={14} className="text-cyber-yellow shrink-0" />
+                      </div>
+                    )}
+                  </div>
+
+                  <PostList 
+                    posts={displayedPosts}
+                    user={user}
+                    blockedUsers={blockedUsers}
+                    onLike={handleToggleLike}
+                    onDislike={handleToggleDislike}
+                    onDeleteRequest={handleDeleteRequest}
+                    onEditRequest={handleEditRequest}
+                    onUserClick={handleUserClick}
+                    onAddComment={handleAddComment}
+                    onDeleteComment={handleDeleteComment}
+                  />
+                  
+                  {displayedPosts.length === 0 && (
+                    <div className="text-center py-20 border border-dashed border-gray-700">
+                      <p className="text-gray-500 font-mono">NO DATA FOUND</p>
+                    </div>
+                  )}
+                </>
+              )}
+            </section>
+          </main>
+
+          <CreatePostModal isOpen={isModalOpen} onClose={() => setModalOpen(false)} onSubmit={handleSavePost} initialData={editingPost} isAdmin={hasPrivileges} />
+          <AdminAuthModal isOpen={isAdminModalOpen} onClose={() => setAdminModalOpen(false)} onSuccess={handleAdminAuthSuccess} />
+          <NicknameModal isOpen={isNicknameModalOpen} onClose={() => setNicknameModalOpen(false)} currentName={user.username} onUpdate={handleUpdateNickname} />
+          <AvatarModal isOpen={isAvatarModalOpen} onClose={() => setAvatarModalOpen(false)} />
+          <ProfileModal 
+            isOpen={!!profileTarget} 
+            onClose={() => setProfileTarget(null)} 
+            targetUser={profileTarget} 
+            currentUser={user.username}
+            onBlock={handleBlockUser}
+            onStartMessage={handleStartMessage}
+          />
+          <MessageModal 
+            isOpen={isMessageOpen} 
+            onClose={() => setMessageOpen(false)} 
+            currentUser={user.username}
+            messages={messages}
+            onSendMessage={handleSendMessage}
+            onDeleteMessage={handleDeleteMessage}
+            onEditMessage={handleEditMessage}
+            initialPartner={messagePartner}
+          />
+          <NetworkStatusModal isOpen={isNetworkModalOpen} onClose={() => setNetworkModalOpen(false)} />
+          <ConfirmationModal isOpen={!!deleteConfirmId} onClose={() => setDeleteConfirmId(null)} onConfirm={confirmDelete} title="CONFIRM DELETION" message="Are you sure you want to delete this post?" />
+        </div>
+      );
+    }
+
+    // Render
+    try {
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+      console.log('✅ Neo Heaven loaded successfully!');
+    } catch (error) {
+      console.error('❌ Failed to render:', error);
+      document.getElementById('root').innerHTML = '<div style="color:red;padding:20px;font-family:monospace;">ERROR: ' + error.message + '</div>';
+    }
+  </script>
+</body>
+</html>
